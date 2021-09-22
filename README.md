@@ -80,3 +80,23 @@ Get the instance of the Cloud SQL and add it to `INSTANCE` in `.env.dev`
 
 This project benefited greatly from two tutorials: [one on flask and gunicorn](https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/) from Michael Herman and [another on flask authentication](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login) from Anthony Herbert at digitalocean.
 
+# GCP deployment
+
+You can deploy the individual services as google app engine services. if you put the following,
+
+`services/web/app.yaml`:
+
+```
+runtime: python39
+
+service_account: <DATABASEUSER>@<PROJECT>.iam.gserviceaccount.com
+service: diet-user-management
+entrypoint: gunicorn project:app
+
+env_variables:
+ FLASK_APP: "project/__init__.py"
+ FLASK_ENV: "production"
+ DATABASE_URL: "mysql+pymysql://<DBUSER>:<DBPASS>@/<DB>?unix_socket=/cloudsql/<PROJECT>:us-central1:sqldemo"
+ ```
+
+You can then do `gcloud app deploy`
